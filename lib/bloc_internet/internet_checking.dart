@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -18,66 +17,72 @@ class AfterIntro extends StatelessWidget {
           child: BlocConsumer<InternetBloc, InternetStates>(
         builder: (context, state) {
           // can show UI data accordingly
-          if (state is InternetGainedState) {
-            return Expanded(
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Internet Connected!"),
-                    SizedBox(
-                      height: 20,
+          if(state is InternetLostState)
+            {
+              return Expanded(
+                child: Scaffold(
+                  body: Container(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "No Internet Connection!",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Lottie.asset('assets/no_wifi.json'),
+                        ],
+                      ),
                     ),
-                    Lottie.asset('assets/yes_wifi.json'),
-                  ],
+                  ),
                 ),
-              ),
-            );
-          } else if (state is InternetLostState) {
-            return Expanded(
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("No Internet Connection!"),
-                    SizedBox(
-                      height: 20,
+              );
+
+            }
+          else if(state is InternetGainedState)
+            {
+              return Container();
+            }
+          else
+            {
+              return Expanded(
+                child: Scaffold(
+                  body: Container(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                         const  Text(
+                            "No Internet Connection!",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Lottie.asset('assets/no_wifi.json'),
+                        ],
+                      ),
                     ),
-                    Lottie.asset('assets/no_wifi.json'),
-                  ],
+                  ),
                 ),
-              ),
-            );
-          }
-          else {
-            return Expanded(
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("No Internet Connection!"),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Lottie.asset('assets/no_wifi.json'),
-                  ],
-                ),
-              ),
-            );
-          }
+              );
+            }
         },
         listener: (context, state) async {
           // can not show the UI changing just used to move to next screen or snack bars
 
           if (state is InternetGainedState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Internet connected!"),
-                backgroundColor: Colors.green,
-              ),
-            );
-
-            await Future.delayed(Duration(milliseconds: 4500));
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -93,13 +98,12 @@ class AfterIntro extends StatelessWidget {
             );
           } else if (state is InternetLostState) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text("No internet connection!"),
                 backgroundColor: Colors.red,
               ),
             );
           }
-
         },
       )),
     );

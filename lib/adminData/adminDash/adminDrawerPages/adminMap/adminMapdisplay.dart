@@ -1,9 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:lottie/lottie.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
+import 'package:project/bloc_internet/internet_bloc.dart';
+import 'package:project/bloc_internet/internet_event.dart';
+import 'package:project/bloc_internet/internet_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminMapDisplay extends StatefulWidget {
@@ -95,6 +100,13 @@ class _MapDisplayState extends State<AdminMapDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer<InternetBloc, InternetStates>(
+  listener: (context, state) {
+    // TODO: implement listener
+  },
+  builder: (context, state) {
+    if(state is InternetGainedState)
+      {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -160,5 +172,63 @@ class _MapDisplayState extends State<AdminMapDisplay> {
               child: CircularProgressIndicator(),
             ),
     );
+  }
+    else if(state is InternetLostState)
+      {
+        return Expanded(
+          child: Scaffold(
+            body: Container(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "No Internet Connection!",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Lottie.asset('assets/no_wifi.json'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    else {
+      return Expanded(
+        child: Scaffold(
+          body: Container(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "No Internet Connection!",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Lottie.asset('assets/no_wifi.json'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+);
   }
 }

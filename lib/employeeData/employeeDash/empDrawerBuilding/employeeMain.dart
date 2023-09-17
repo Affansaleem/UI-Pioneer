@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../empDrawerPages/empProfilePage/profilepage.dart';
+import 'package:lottie/lottie.dart';
+import 'package:project/bloc_internet/internet_bloc.dart';
+import 'package:project/bloc_internet/internet_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Login Page/login_bloc/loginbloc.dart';
+import '../../../Login Page/login_page.dart';
 import '../empDrawerPages/EmpReports/reports_page_employee.dart';
-import '../empDrawerPages/empLogout/homepage.dart';
+import '../empDrawerPages/empProfilePage/profilepage.dart';
 import '../employee_Dashboard_Bloc/EmpDashboardk_bloc.dart';
 import 'empDash/empDashHome.dart';
 import 'empDrawer.dart';
@@ -17,6 +22,24 @@ class EmpMainPage extends StatefulWidget {
 
 class _EmpMainPageState extends State<EmpMainPage> {
   final EmpDashboardkBloc dashBloc = EmpDashboardkBloc();
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('Login', false); // Set the login status to false
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return Builder(
+            builder: (context) => BlocProvider(
+              create: (context) => SignInBloc(),
+              child: LoginPage(),
+            ),
+          ); // Navigate back to LoginPage
+        },
+      ),
+    );
+  }
 
   late double xoffset;
   late double yoffset;
@@ -50,54 +73,123 @@ class _EmpMainPageState extends State<EmpMainPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-
-    body: Stack(
-      children: [
-        buildDrawer(),
-        buildPage(),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) =>
+      BlocConsumer<InternetBloc, InternetStates>(listener: (context, state) {
+        // TODO: implement listener
+      }, builder: (context, state) {
+        if (state is InternetGainedState) {
+          return Scaffold(
+            // backgroundColor: const Color(0xFF454545),
+            body: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/ideogram.jpeg"),
+                      // Replace with your image path
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                buildDrawer(),
+                buildPage(),
+              ],
+            ),
+          );
+        } else if (state is InternetLostState) {
+          return Expanded(
+            child: Scaffold(
+              body: Container(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "No Internet Connection!",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Lottie.asset('assets/no_wifi.json'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        } else {
+          return Expanded(
+            child: Scaffold(
+              body: Container(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "No Internet Connection!",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Lottie.asset('assets/no_wifi.json'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      });
 
   Widget buildDrawer() => SafeArea(
-    child: AnimatedOpacity(
-      opacity: isDrawerOpen ? 1.0 : 0.0,
-      duration: Duration(milliseconds: 300),
-      child: Container(
-        width: xoffset,
-        child: MyDrawer(
-          onSelectedItems: (selectedItem) {
-            setState(() {
-              item = selectedItem;
-              closeDrawer();
-            });
+        child: AnimatedOpacity(
+          opacity: isDrawerOpen ? 1.0 : 0.0,
+          duration: Duration(milliseconds: 300),
+          child: Container(
+            width: xoffset,
+            child: MyDrawer(
+              onSelectedItems: (selectedItem) {
+                setState(() {
+                  item = selectedItem;
+                  closeDrawer();
+                });
 
-            switch (item) {
-              case EmpDrawerItems.home:
-                dashBloc.add(NavigateToHomeEvent());
-                break;
-              case EmpDrawerItems.reports:
-                dashBloc.add(NavigateToReportsEvent());
-                break;
+                switch (item) {
+                  case EmpDrawerItems.home:
+                    dashBloc.add(NavigateToHomeEvent());
+                    break;
 
-              case EmpDrawerItems.profile:
-                dashBloc.add(NavigateToProfileEvent());
-                break;
+                  case EmpDrawerItems.reports:
+                    dashBloc.add(NavigateToReportsEvent());
+                    break;
 
-              case EmpDrawerItems.logout:
-                dashBloc.add(NavigateToLogoutEvent());
-                break;
+                  case EmpDrawerItems.profile:
+                    dashBloc.add(NavigateToProfileEvent());
+                    break;
 
-              default:
-                dashBloc.add(NavigateToHomeEvent());
-                break;
-            }
-          },
+                  case EmpDrawerItems.logout:
+                    dashBloc.add(NavigateToLogoutEvent());
+                    break;
+
+                  default:
+                    dashBloc.add(NavigateToLogoutEvent());
+                    break;
+                }
+              },
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   Widget buildPage() {
     return WillPopScope(
@@ -135,7 +227,7 @@ class _EmpMainPageState extends State<EmpMainPage> {
               child: Container(
                 color: isDrawerOpen
                     ? Colors.white12.withOpacity(0.23)
-                    : const Color(0xFFFDF7F5),
+                    : const Color(0xFFFAF9F6),
                 child: getDrawerPage(),
               ),
             ),
@@ -153,16 +245,31 @@ class _EmpMainPageState extends State<EmpMainPage> {
           return EmpProfilePage(openDrawer: openDrawer);
         } else if (state is NavigateToHomeState) {
           return EmpDashboard(openDrawer: openDrawer);
-        }
-        else if (state is NavigateToReportsState) {
+        } else if (state is NavigateToReportsState) {
           return EmpReportsPage(
             openDrawer: openDrawer,
           );
-        }
-        else if (state is NavigateToLogoutState) {
-          return EmpHomePage();
-        }
-        else {
+        } else if (state is NavigateToLogoutState) {
+          return AlertDialog(
+            title: Text("Confirm Logout"),
+            content: Text("Are you sure?"),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => EmpMainPage(),),);// Close the dialog
+                },
+              ),
+              TextButton(
+                child: Text('Logout'),
+                onPressed: () {
+                  // Add the logic to perform logout here
+                  _logout(context); // Close the dialog
+                },
+              ),
+            ],
+          );
+        } else {
           return EmpDashboard(openDrawer: openDrawer);
         }
       },
