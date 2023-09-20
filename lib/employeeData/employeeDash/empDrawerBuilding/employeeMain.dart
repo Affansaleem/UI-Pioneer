@@ -96,7 +96,8 @@ class _EmpMainPageState extends State<EmpMainPage> {
               ],
             ),
           );
-        } else if (state is InternetLostState) {
+        }
+        else if (state is InternetLostState) {
           return Expanded(
             child: Scaffold(
               body: Container(

@@ -425,25 +425,23 @@ class _AdminPresentReportState extends State<AdminPresentReport> {
       {
         return Expanded(
           child: Scaffold(
-            body: Container(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "No Internet Connection!",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "No Internet Connection!",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Lottie.asset('assets/no_wifi.json'),
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Lottie.asset('assets/no_wifi.json'),
+                ],
               ),
             ),
           ),

@@ -10,6 +10,17 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> {
   final PageController _controller = PageController();
+  int currentPageIndex = 0; // Initialize with the first page index
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      setState(() {
+        currentPageIndex = _controller.page?.round() ?? 0;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +30,30 @@ class _IntroScreenState extends State<IntroScreen> {
           PageView(
             onPageChanged: (index) {
               setState(() {
-                // return true if index is 2 or last page
+                currentPageIndex = index;
               });
             },
             controller: _controller,
             children: const [
               Screen1(),
+              // Add more pages if needed
             ],
           ),
-
+          // Example of conditional rendering based on the current page index
+          if (currentPageIndex == 2)
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Do something when on the last page
+                },
+                child: Text('Next'),
+              ),
+            ),
         ],
       ),
     );
   }
 }
+

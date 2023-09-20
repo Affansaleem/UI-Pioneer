@@ -390,41 +390,13 @@ class _AdminAbsentReportsState extends State<AdminAbsentReports> {
       {
         return Expanded(
           child: Scaffold(
-            body: Container(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "No Internet Connection!",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Lottie.asset('assets/no_wifi.json'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      }
-    else {
-      return Expanded(
-        child: Scaffold(
-          body: Container(
-            child: Center(
+            body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     "No Internet Connection!",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.red,
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -436,6 +408,30 @@ class _AdminAbsentReportsState extends State<AdminAbsentReports> {
                   Lottie.asset('assets/no_wifi.json'),
                 ],
               ),
+            ),
+          ),
+        );
+      }
+    else {
+      return Expanded(
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "No Internet Connection!",
+                  style:const TextStyle(
+                    color: Colors.red,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Lottie.asset('assets/no_wifi.json'),
+              ],
             ),
           ),
         ),
